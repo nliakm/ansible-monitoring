@@ -1,0 +1,14 @@
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'hass'
+    scrape_interval: 60s
+    metrics_path: /api/prometheus
+    bearer_token: "{{ hassbian_bearer_token }}"
+
+    scheme: http
+    static_configs:
+      - targets: ['{{ homeassistant_ip }}:8123'] 

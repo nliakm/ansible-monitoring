@@ -1,0 +1,20 @@
+---
+- hosts: monitoring
+
+  vars_files:
+    - ./vars/vars.yml
+
+  roles:
+    - basics
+    - loki
+    - grafana
+    - prometheus
+    - promtail
+    - monitoring
+
+- hosts: clients
+  vars_files:
+    - ./vars/vars.yml
+
+  roles:
+    - promtail

@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  promtail:
+    image: grafana/promtail:1.5.0
+    restart: on_failure
+    volumes:
+            - /var/monitoring/promtail-config:/mnt/config:Z
+            - /var/log:/var/log:ro
+    command: -config.file=/mnt/config/promtail-config.yaml

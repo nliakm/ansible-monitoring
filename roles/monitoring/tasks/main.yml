@@ -1,0 +1,12 @@
+- name: Copy docker-compose.yml to new directory
+  copy:
+    src: docker-compose.yml
+    dest: /var/monitoring/docker-compose.yml
+    owner: mon
+    group: mon
+
+- name: Run podman-compose
+  shell: /usr/local/bin/podman-compose up -d
+  args:
+    chdir: /var/monitoring/
+  become_user: mon

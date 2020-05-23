@@ -1,0 +1,8 @@
+- name: Create directories
+  file:
+    path: /var/monitoring/grafana
+    state: directory
+    owner: mon
+    group: mon
+    mode: 0777
+  become: yes

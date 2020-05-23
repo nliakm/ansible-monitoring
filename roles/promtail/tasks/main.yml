@@ -1,0 +1,43 @@
+- name: Create directories
+  file:
+    path: /var/monitoring/promtail-config
+    state: directory
+    owner: "{{ podman_user }}"
+    group: "{{ podman_user }}"
+  become: yes
+
+- name: Template promtail-confg.yaml.j2 to new directory
+  template:
+    src: promtail-config.yaml.j2
+    dest: /var/monitoring/promtail-config/promtail-config.yaml
+    owner: "{{ podman_user }}"
+    group: "{{ podman_user }}"
+  become: yes
+
+- name: Copy docker-compose.yml to new directory
+  copy:
+    src: docker-compose.yml
+    dest: /var/monitoring/promtail-compose.yml
+    owner: "{{ podman_user }}"
+    group: "{{ podman_user }}"
+  become: yes
+  when: use_podman
+
+- name: Run podman-compose
+  shell: /usr/local/bin/podman-compose -f /var/monitoring/promtail-compose.yml up -d
+  args:
+    chdir: /tmp
+  become_user: root
+  when: use_podman
+
+- name: Run promtail as docker
+  docker_container:
+    name: promtail
+    command: -config.file=/mnt/config/promtail-config.yaml
+    volumes:
+      - /var/log:/var/log:ro
+      - /var/monitoring/promtail-config:/mnt/config
+    image: grafana/promtail:1.5.0
+    restart_policy: on-failure
+  become: yes
+  when: not use_podman

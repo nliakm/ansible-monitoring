@@ -1,0 +1,15 @@
+- name: Create directories
+  file:
+    path: /var/monitoring/prometheus
+    state: directory
+    owner: "{{ podman_user }}"
+    group: "{{ podman_user }}"
+  become: yes
+
+- name: Template prometheus.yml to host
+  copy:
+    src: prometheus.yml.j2
+    dest: /var/monitoring/prometheus/prometheus.yml
+    owner: "{{ podman_user }}"
+    group: "{{ podman_user }}"
+  become: yes

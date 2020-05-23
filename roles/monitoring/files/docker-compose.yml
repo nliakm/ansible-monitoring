@@ -1,0 +1,37 @@
+version: "3"
+
+networks:
+  monitoring:
+
+services:
+  loki:
+    image: grafana/loki:1.5.0
+    restart: on_failure
+    ports:
+      - "3100:3100"
+    command: -config.file=/mnt/config/loki-config.yaml
+    volumes:
+            - /var/monitoring/loki-config:/mnt/config:Z
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:master
+    restart: on_failure
+    user: "1010"
+    volumes:
+            - /var/monitoring/grafana:/var/lib/grafana:Z
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus
+    restart: on_failure
+    volumes:
+      - /var/monitoring/prometheus:/etc/prometheus:Z
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
